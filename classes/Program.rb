@@ -1,6 +1,6 @@
 class Program < Display
   def initialize(screen, header)
-    @screen = screen
+    @screen = screen, @header = header;
 
     super(0, 8, screen.width, screen.height - header.height - 1);
     setColors(Curses::COLOR_CYAN, Curses::COLOR_BLACK, 2)
@@ -8,7 +8,7 @@ class Program < Display
     setBorder("|", "-")
     setColors(Curses::COLOR_GREEN, Curses::COLOR_BLACK, 3)
     setCursor(1, 1)
-    addText "#{@display.curx()} + #{@display.cury()} #{screen.height}"
+    addText("#{@display.curx()} + #{@display.cury()} #{screen.height}")
   end
 
   def start
