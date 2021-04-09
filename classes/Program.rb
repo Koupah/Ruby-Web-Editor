@@ -1,11 +1,13 @@
 require_relative "display/Debug"
-
+require_relative "features/CreateConfig"
 class Program < Display
   def initialize(screen, header, arguments)
     super(0, header.height + 1, arguments[:debug] ? screen.width / 2 : screen.width, screen.height - header.height - 1)
 
     @screen = screen, @header = header, @arguments = arguments
 
+    Curses.init_pair(4, Curses::COLOR_YELLOW, Curses::COLOR_BLACK)
+    
     if arguments[:debug]
       @debug = Debug.new((screen.width / 2) + 1, header.height + 1, (screen.width / 2) - 1, screen.height - header.height - 1)
       @debug.setup()
@@ -14,10 +16,22 @@ class Program < Display
     end
 
     debug "Arguments: #{arguments}"
+  end
 
-    # Color our border Cyan
+  def start
+
+    debug "Making Config Folder (incase it doesn't exist)"
+    makeConfigFolder();
+
+    # TODO
+    # DONEish - Logic handling input
+    # NEED TO DO - Navigate to and from settings
+    # DONE - Color our border Cyan
     setColors(Curses::COLOR_CYAN, Curses::COLOR_BLACK, 2)
     setBorder("|", "-")
+
+    setCursor(5, 0)
+    addText("OPTIONS")
 
     # We want content to be green
     setColors(Curses::COLOR_GREEN, Curses::COLOR_BLACK, 3)
@@ -25,17 +39,14 @@ class Program < Display
     # Set our cursor inside of the box for writing content
     setCursor(1, 1)
 
-    debug("#{makeSelection("Choose an option!", [{text: "option 1", value: 1}, {text: "option 2", value: 2}, {text: "third option", value: 3}])}");
-
-  end
-
-  def start
-
-    # TODO
-    # Logic handling input
-    # Navigate to and from settings
-
-    @display.getch
+    while true
+      case makeSelection("What would you like to do?", [{ text: "Create/Edit Website Config", value: 1 }, { text: "option 2", value: 2 }, { text: "Exit Program", value: 9 }])
+      when 1
+        CreateConfig.start(self);
+      when 9
+        break;
+      end
+    end
   end
 
   # Debug method to clean up the calling of printing debug
