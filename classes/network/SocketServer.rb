@@ -1,6 +1,7 @@
 require "socket" # Provides TCPServer and TCPSocket classes
 require "digest/sha1"
 require_relative "Client"
+require_relative "ConnectionError"
 
 class SocketServer
   attr_reader :port
@@ -23,7 +24,7 @@ class SocketServer
           next
         end
 
-        client = Client.new(socket, self, @handler)
+        client = Client.new(socket, @handler)
         @clients << client
         client.listen
       end
@@ -62,8 +63,6 @@ Connection: Upgrade
 Sec-WebSocket-Accept: #{response_key}
 
 eos
-
-    STDERR.puts "Handshake completed. Starting to parse the websocket frame."
     return true
   end
 end

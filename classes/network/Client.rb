@@ -1,9 +1,12 @@
 class Client
-  def initialize(socket, socketServer, messageHandler)
+  def initialize(socket, messageHandler)
     @socket = socket
-    @server = socketServer
     @messageHandler = messageHandler
     @finished = false
+  end
+
+  def close
+    @finished = true
   end
 
   def listen
