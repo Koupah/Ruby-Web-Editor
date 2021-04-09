@@ -1,17 +1,16 @@
 require "curses"
 
 module Displayable
-
-  include Curses;
+  include Curses
 
   def update
-    doupdate;
+    @display.refresh
   end
 
   def setColors(col1, col2, id)
     Curses.init_pair(id, col1, col2)
     @display.color_set(id)
-    @display.refresh();
+    @display.refresh()
   end
 
   def setCursor(x, y)
@@ -28,13 +27,13 @@ module Displayable
 
   def setBorder(vertical, horizontal)
     @display.box(vertical, horizontal)
-    @display.refresh();
+    @display.refresh()
   end
 
   def setText(text)
     @display.clear
     @display.addstr(text)
-    @display.refresh();
+    @display.refresh()
   end
 
   def seperator(character)
@@ -74,7 +73,7 @@ module Displayable
     selection = 0
     max = selections.length - 1
     setKeypad(true)
-    
+
     while true
       clearBox()
       @display.color_set(2)
@@ -85,7 +84,7 @@ module Displayable
       current = 0
       selections.each { |hash|
         setCursor(1, 3 + current)
-        @display.color_set(current == selection ? 3 : 2)
+        @display.color_set(current == selection ? 4 : 3)
         addText((current == selection ? "-> " : "   ") + hash[:text])
         current += 1
       }
@@ -94,21 +93,18 @@ module Displayable
 
       case character
       when KEY_UP
-        selection = [selection -= 1, 0].max
+        selection = [selection - 1 < 0 ? max : selection - 1, 0].max
       when "s", "S", KEY_DOWN
-        selection = [selection += 1, max].min
+        selection = [selection + 1 > max ? 0 : selection + 1, max].min
       when 10
-        break;
+        break
       else
-        debug "#{character}";
+        debug "#{character}"
       end
-
-      debug "done"
-
       doupdate
     end
     setKeypad(false)
-
-    return selections[selection][:value];
+    @display.refresh()
+    return selections[selection][:value]
   end
 end
