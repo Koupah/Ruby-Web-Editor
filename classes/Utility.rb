@@ -1,4 +1,5 @@
 require "artii"
+require "tty-box"
 
 def generateArt(string, font = "big")
   a = Artii::Base.new :font => font
@@ -13,5 +14,9 @@ def getWidth(string)
     end
   }
 
-  return longest;
+  return longest
+end
+
+def makeBox(content, width, height, title = nil)
+  box = TTY::Box.frame(width: width, height: height, title: { top: title }) {content}
 end
