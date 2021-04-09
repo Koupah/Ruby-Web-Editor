@@ -7,9 +7,13 @@ class Screen
 
   attr_reader :width, :height, :displays
 
-  def initialize
+  def initialize(colors)
     init_screen
-    start_color
+
+    if (colors)
+      start_color
+    end
+
     curs_set 0
 
     @height, @width, @displays = Curses.lines - 1, Curses.cols - 1, [{}]
