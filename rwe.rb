@@ -18,16 +18,20 @@ def main
     exit
   end
 
-  headerArt = generateArt("( Ruby Web Editor )", "big")
+  headerRaw = "( Ruby Web Editor )"
+  headerArt = generateArt(headerRaw, "big")
   stringWidth = getWidth(headerArt)
   header = screen.createDisplay("header", (screen.width / 2) - (stringWidth / 2) - 1, 0, stringWidth + 1, 7)
   header.setColors(Curses::COLOR_RED, Curses::COLOR_BLACK, 1)
 
+  (0..headerRaw.length).each { |index|
+    header.setText(generateArt(headerRaw[0..index], "big"))
+    sleep(0.1)
+  }
   header.setText generateArt("( Ruby Web Editor )", "big")
 
-  program = Program.new(screen, header);
+  program = Program.new(screen, header)
   program.start
-
 
   errorDisplay.setColors(Curses::COLOR_RED, Curses::COLOR_BLACK, 1)
   box = TTY::Box.frame(width: [screen.width, 40].min, height: [screen.height, 7].min, title: { top_left: "EXITING" }) do
@@ -36,7 +40,6 @@ def main
   errorDisplay.setCursor(0, (screen.height / 2) - (box.split(/\n/).length / 2))
   errorDisplay.addText(box)
   errorDisplay.display.getch
-
 end
 
 main
