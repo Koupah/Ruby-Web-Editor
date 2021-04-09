@@ -1,6 +1,7 @@
 require "artii"
 require "tty-box"
 require "strings"
+require 'fileutils'
 
 def generateArt(string, font = "big")
   a = Artii::Base.new :font => font
@@ -22,11 +23,12 @@ def makeBox(content, width, height, title = nil)
   box = TTY::Box.frame(width: width, height: height, title: { top: title }) { content }
 end
 
+# Essentially just checking if any of the VARGS are in our query, could be done in reverse but :shrug:
 def argsContain(query)
   case query
   when Array
     ARGV.each { |arg|
-      return true if query.include? arg
+      return true if query.include? arg.downcase
     }
     return false
   else
@@ -41,6 +43,14 @@ def checkArguments
   toReturn[:debug] = argsContain(["-debug", "-d", "--debug", "--d"])
   toReturn[:colors] = !argsContain(["-nocolor", "-nc", "--nocolors", "--nc", "--colorless", "-colorless"])
   toReturn[:animation] = !argsContain(["-noanimation", "-na", "--na", "--noanimation", "--quick", "-quick", "-q", "--q"])
-  
-  return toReturn;
+
+  return toReturn
+end
+
+def configExists(file)
+  return File.exist?("configs/" + file + ".RWEcfg")
+end
+
+def makeConfigFolder 
+  FileUtils.mkdir_p 'configs/';
 end
