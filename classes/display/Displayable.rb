@@ -99,11 +99,11 @@ module Displayable
       character = @display.getch
 
       case character
-      when KEY_UP
+      when "w", "W", "1", KEY_UP
         selection = [selection - 1 < 0 ? max : selection - 1, 0].max
-      when "s", "S", KEY_DOWN
+      when "s", "S", "2", KEY_DOWN
         selection = [selection + 1 > max ? 0 : selection + 1, max].min
-      when 10
+      when 10 # Enter key
         break
       else
         debug "#{character}"
