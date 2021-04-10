@@ -2,6 +2,12 @@ require_relative "classes/Utility"
 require_relative "classes/display/Screen"
 require_relative "classes/display/Color"
 require_relative "classes/Program"
+require "color_math"
+
+def endProgram
+  Curses.close_screen
+  exit
+end
 
 def main
   arguments = checkArguments()
@@ -14,11 +20,15 @@ def main
 
   errorDisplay = screen.createDisplay("error", 0, 0, screen.width, screen.height)
 
-  errorDisplay.display.color_set(2)
-
   if (screen.height < 19)
     displayError(errorDisplay, "ERROR", "ERROR: Your terminal window is too short! Please make it taller!\nMinimum Height: 19 chars\nCurrent Height: #{screen.height} chars")
-    exit
+  elsif arguments[:help]
+    displayError(errorDisplay, "HELP", "Command Line Arguments:\n
+      -help: Show this message\n
+      -rainbow: Rainbow header\n
+      -debug: Show debug menu\n
+      -nocolor: Run application without color\n
+      -noanimation: Skip the animation on application startup\n\nPress any key to exit.")
   end
 
   # Header Art
@@ -38,27 +48,54 @@ def main
     }
   end
 
+  if arguments[:rgb]
+    Thread.new {
+      # The ideal solution would be to set the ID so out of this world it can't be accidentally used, but cpu's have limitations
+      # And I want this to work on as many platforms as possible...
+      # Why do people still have 32 bit systems )':
+      # Also, there seems to be a max ID ~ 10??. I guess 9 will work for now
+
+      # Update: this is like a secret feature anyways, why do i care ??
+      id = 9
+      Curses.init_color(id, 255, 0, 0)
+      header.display.attron(id)
+      value = 1
+      while true
+        rgb = ColorMath.from_hsl(value, 100, 60).to_rgb
+        Curses.init_color(id, rgb[0] * 3, rgb[1] * 3, rgb[2] * 3)
+        sleep(0.2)
+        header.display.refresh
+        value = (value + 20) % 360
+      end
+    }
+  end
+
   header.setText generateArt("( Ruby Web Editor )", "big")
 
   program = Program.new(screen, header, arguments)
+
+  # Program.start is blocking, once it's complete the app is over
   program.start
 
+  # Clear the displays
   program.display.clear
-  errorDisplay.display.refresh
-
+  errorDisplay.display.clear
+  header.display.clear
+  
   # Reuse Error Display for exit screen
   displayError(errorDisplay, "EXITING", "\nThank you for using Ruby Web Editor!\n\nPress any key to exit.")
 end
 
 def displayError(errorDisplay, title, error)
   errorDisplay.setKeypad(true)
-  Color.set(errorDisplay, :red)
+  Color.set(errorDisplay, :red, :bright)
   box = TTY::Box.frame(width: errorDisplay.width - 1, height: errorDisplay.height - 1, title: { top_left: title }) do
     error
   end
   errorDisplay.setCursor(0, (errorDisplay.height / 2) - (box.split(/\n/).length / 2))
   errorDisplay.addText(box)
   errorDisplay.display.getch
+  endProgram
 end
 
 main
