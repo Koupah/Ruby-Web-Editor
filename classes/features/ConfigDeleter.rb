@@ -3,7 +3,7 @@ require_relative "../Utility"
 class ConfigDeleter
   def ConfigDeleter.options
     options = getAllConfigs()
-    options << "Back (Don't Delete)"
+    options << "Return (Don't Delete)"
     return options
   end
 
@@ -11,8 +11,8 @@ class ConfigDeleter
     while true
       toDelete = display.getScrollableSelectionInput("Which Config would you like to delete?", self.options)
 
-      # Return if they select 'back'
-      return unless (toDelete.downcase != "back (don't delete)")
+      # Return if they select 'return'
+      return unless (toDelete.downcase != "return (don't delete)")
 
       if display.getSelectionInput("Are you sure you want to delete \"#{toDelete}\"?", [{ text: "Yes", value: true }, { text: "No", value: false }])
         display.debug("Deleting config file: #{toDelete}")
