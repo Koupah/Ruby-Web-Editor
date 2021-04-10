@@ -15,9 +15,14 @@ module Displayable
     @display.clear
   end
 
-  def setBorder(vertical, horizontal)
+  def setBorder(vertical, horizontal, title = "")
     @display.box(vertical, horizontal)
     @display.refresh()
+
+    cursor = getCursor()
+    setCursor(5, 0)
+    addText(title)
+    setCursor(cursor[0], cursor[1])
   end
 
   def setText(text, quick = false)
@@ -82,11 +87,16 @@ module Displayable
     while true
       clearBox(true)
       Color.set(self, :yellow, :normal)
-      setCursor(1, 1)
-      addText(message, true)
+      setCursor(1, 0)
+
+      curspos = getCursor()
+      message.split(/\n/).each { |line|
+        setCursor(curspos[0], getCursor()[1] + 1)
+        addText(line)
+      }
 
       Color.set(self, :white, :dim)
-      setCursor(2, 2)
+      setCursor(2, getCursor()[1] + 1)
       addText("- Press Enter, K or 3 to continue.", true)
 
       setCursor(1, getCursor()[1] + 2)
@@ -110,9 +120,13 @@ module Displayable
   def selectionOutput(message)
     clearBox(true)
     Color.set(self, :yellow, :bright)
-    setCursor(1, 1)
+    setCursor(1, 0)
 
-    addText(message, true)
+    curspos = getCursor()
+    message.split(/\n/).each { |line|
+      setCursor(curspos[0], getCursor()[1] + 1)
+      addText(line)
+    }
 
     Color.set(self, :white, :dim)
     setCursor(2, 2)
@@ -215,18 +229,23 @@ module Displayable
       clearBox()
 
       @display.color_set(2)
-      setCursor(1, 1)
 
-      addText(message)
+      setCursor(1, 0)
+
+      curspos = getCursor()
+      message.split(/\n/).each { |line|
+        setCursor(curspos[0], getCursor()[1] + 1)
+        addText(line)
+      }
 
       if input != nil
         prev = @color
         Color.set(self, :red, :bright)
         if input.length < 1
-          setCursor(2, getLines(message) + 1) # Put it the line after message
+          setCursor(2, getCursor()[1] + 1) # Put it the line after message
           addText("Your input needs to be atleast 1 character long!")
         elsif inputChecker != nil && !(checkerOutput = inputChecker.call(input))[:passed]
-          setCursor(2, getLines(message) + 1) # Put it the line after message
+          setCursor(2, getCursor()[1] + 1) # Put it the line after message
           addText(checkerOutput[:message])
         else
           break
