@@ -27,7 +27,7 @@ class Color
     @normal = @default = A_NORMAL
     @blink = @blinking = A_BLINK
   end
-  
+
   def Color.set(display, id, type = @normal)
     # Disable previous color
     display.display.attroff(display.color) if display.color != nil
@@ -37,12 +37,14 @@ class Color
 
     # Enable the provided color
     display.display.attron(display.color)
+  end
 
+  def Color.get(id)
+    return instance_variable_get("@#{id}");
   end
 
   def Color.setByAttribute(display, attribute)
     display.setColor(attribute)
     display.display.attron(attribute)
   end
-  
 end

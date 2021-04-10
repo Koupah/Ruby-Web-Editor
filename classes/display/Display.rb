@@ -1,4 +1,5 @@
 require_relative "Displayable"
+require_relative "Color"
 require "curses"
 require "tty-box"
 
@@ -12,7 +13,8 @@ class Display
 
   def initialize(x, y, w, h, ignore = false)
     @display = Curses::Window.new(h + 1, w, y, x) # 1 needs to be added onto our height to make it correct, seems to be an issue with Curses?
-    @x = x, @y = y, @width = w, @height = h, @color = nil, @title = "OPTIONS"
+    @x, @y, @width, @height, @color, @title = x, y, w, h, nil, "OPTIONS";
+
     Color.set(self, :white)
 
     if !ignore

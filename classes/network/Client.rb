@@ -1,8 +1,6 @@
 class Client
   def initialize(socket, config)
-    @socket = socket
-    @config = config
-    @finished = false
+    @socket, @config, @finished = socket, config, false
   end
 
   def close

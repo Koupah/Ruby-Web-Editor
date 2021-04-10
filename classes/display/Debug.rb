@@ -2,7 +2,7 @@ require "strings"
 
 class Debug < Display
   def initialize(x, y, w, h)
-    super x, y, w, h
+    super(x, y, w, h)
     @messages = []
   end
 
@@ -15,12 +15,11 @@ class Debug < Display
   end
 
   def debug(text)
-    
     clearBox()
 
-    Color.set(self, :green);
+    Color.set(self, :green)
     setCursor(1, 1)
-    
+
     @messages << "---"
     @messages.push(*Strings.wrap(text, @width - 3).split(/\n/).reverse)
 

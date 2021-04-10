@@ -8,7 +8,7 @@ class Program < Display
   def initialize(screen, header, arguments)
     super(0, header.height + 1, arguments[:debug] ? screen.width / 2 : screen.width, screen.height - header.height - 1)
 
-    @screen = screen, @header = header, @arguments = arguments
+    @screen, @header, @arguments = screen, header, arguments
 
     if arguments[:debug]
       @debug = Debug.new((screen.width / 2) + 1, header.height + 1, (screen.width / 2) - 1, screen.height - header.height - 1)
