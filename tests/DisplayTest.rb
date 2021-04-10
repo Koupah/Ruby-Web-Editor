@@ -1,6 +1,8 @@
 require "test/unit"
 require_relative "../classes/display/Display"
 
+# Checking if the display works, most important part of the application
+
 class DisplayTest < Test::Unit::TestCase
   def testNewInstance
     Color.setup();
