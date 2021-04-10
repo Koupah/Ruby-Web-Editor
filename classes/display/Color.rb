@@ -9,6 +9,8 @@ class Color
     Curses.init_pair(5, Curses::COLOR_BLUE, Curses::COLOR_BLACK)
     Curses.init_pair(6, Curses::COLOR_MAGENTA, Curses::COLOR_MAGENTA)
     Curses.init_pair(7, Curses::COLOR_WHITE, Curses::COLOR_BLACK)
+    Curses.init_pair(7, Curses::COLOR_BLACK, Curses::COLOR_BLACK)
+
     @red = 1
     @yellow = 2
     @green = 3
@@ -16,6 +18,7 @@ class Color
     @blue = 5
     @magenta = 6
     @white = 7
+    @black = 8
 
     @dim = A_DIM
     @bright = A_BOLD
@@ -23,7 +26,19 @@ class Color
   end
 
   def Color.set(display, id, type = @normal)
-    display.display.attron(Curses::color_pair(instance_variable_get("@#{id}")) | (type != @normal ? instance_variable_get("@#{type}") : type))
-    # display.color_set(instance_variable_get("@#{id}"))
+    # Disable previous color
+    display.display.attroff(display.color) if display.color != nil
+
+    # Set the color variable of that display, for caching
+    display.setColor(Curses::color_pair(instance_variable_get("@#{id}")) | (type != @normal ? instance_variable_get("@#{type}") : type))
+
+    # Enable the provided color
+    display.display.attron(display.color)
+    
+  end
+
+  def Color.setByAttribute(display, attribute)
+    display.setColor(attribute)
+    display.display.attron(attribute)
   end
 end
