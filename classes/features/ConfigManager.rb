@@ -4,7 +4,7 @@ require_relative "ConfigEditor"
 class ConfigManager
   def ConfigManager.start(display)
     while true
-      defaultBox("Ruby Web Editor - Config Manager")
+      defaultBox(display, "Ruby Web Editor - Config Manager")
 
       case display.getSelectionInput("What would you like to do?", [{ text: "Create New Config", value: 1 }, { text: "Modify Existing Config", value: 2 }, { text: "Return", value: 9 }])
       when 1

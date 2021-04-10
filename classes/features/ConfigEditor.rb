@@ -25,7 +25,7 @@ class ConfigEditor
 
     while true
 
-      defaultBox("Ruby Web Editor - Config Editor")
+      defaultBox(display, "Ruby Web Editor - Config Editor")
 
       case display.getSelectionInput("What do you wish to edit?", [{ text: "Root Variables", value: 1 }, { text: "Class Values", value: 2 }, { text: "Save & Return", value: 8 }, { text: "Return without Saving", value: 9 }])
 

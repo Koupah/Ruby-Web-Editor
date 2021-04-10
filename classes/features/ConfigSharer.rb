@@ -4,7 +4,7 @@ require "strings"
 class ConfigSharer
   def ConfigSharer.start(display)
     while true
-      defaultBox("Ruby Web Editor - Config Deleter")
+      defaultBox(display, "Ruby Web Editor - Config Sharer")
       
       case display.getSelectionInput("What would you like to do?", [{ text: "Import a Config", value: 1 }, { text: "Share/Export a Config", value: 2 }, { text: "Return", value: 9 }])
       when 1
@@ -29,6 +29,9 @@ class ConfigSharer
   def ConfigSharer.import(display)
     input = display.getStringInput("Please type in the Share Code\nAlternatively you can type \"return\" to return", self.method(:shareCodeValidate)).tr("\n", "")
     return if input.downcase == "return"
+
+    # Remove any characters that may have hit the border of the window
+    defaultBox(display, "Ruby Web Editor - Config Editor")
 
     imported = Config.new("placeholder")
     if !imported.load(display, input)

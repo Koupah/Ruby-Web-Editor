@@ -1,6 +1,22 @@
 require "artii"
 require "tty-box"
 require "fileutils"
+require "rbconfig"
+require_relative "display/Color"
+
+def defaultBox(display, title)
+  Color.set(display, :magenta, :bright)
+  display.setBorder("|", "-", title)
+  Color.set(display, :green, :bright)
+end
+
+def isWindows()
+  return (RbConfig::CONFIG["host_os"] =~ /mswin|mingw|cygwin/)
+end
+
+def writeSharecode(shareCode)
+  File.write("configs/Latest-Share-Code.txt", shareCode)
+end
 
 def generateArt(string, font = "big")
   a = Artii::Base.new :font => font
@@ -84,7 +100,7 @@ end
 def saveConfig(name, data)
   begin
     File.write("configs/#{name}.rwecfg", JSON.pretty_generate(data))
-    return true;
+    return true
   rescue => exception
     return false
   end
@@ -92,11 +108,10 @@ def saveConfig(name, data)
   return false
 end
 
-
 def makeConfigFile(configName)
   begin
-    File.write("configs/#{configName}.rwecfg", JSON.pretty_generate({rootValues: "", classValues: ""}))
-    return true;
+    File.write("configs/#{configName}.rwecfg", JSON.pretty_generate({ rootValues: "", classValues: "" }))
+    return true
   rescue => exception
     return false
   end
