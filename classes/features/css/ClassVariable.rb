@@ -7,8 +7,8 @@ class ClassVariable
 
     if config.hasClassValues(name)
       display.popup("Appending to existing class in config!");
-      values = config.getClassValues(name)[:values];
-      config.removeClassValues(name)
+      values = config.getClassVariable(name)[:values];
+      config.removeClassVariable(name)
     else
       values = []
     end
