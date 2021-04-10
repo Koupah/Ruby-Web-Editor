@@ -1,6 +1,5 @@
 require "artii"
 require "tty-box"
-require "strings"
 require "fileutils"
 
 def generateArt(string, font = "big")
