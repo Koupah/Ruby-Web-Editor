@@ -1,7 +1,7 @@
 require "artii"
 require "tty-box"
 require "strings"
-require 'fileutils'
+require "fileutils"
 
 def generateArt(string, font = "big")
   a = Artii::Base.new :font => font
@@ -17,6 +17,10 @@ def getWidth(string)
   }
 
   return longest
+end
+
+def getLines(string)
+  return string.split(/\n/).length
 end
 
 def makeBox(content, width, height, title = nil)
@@ -51,6 +55,10 @@ def configExists(file)
   return File.exist?("configs/" + file + ".RWEcfg")
 end
 
-def makeConfigFolder 
-  FileUtils.mkdir_p 'configs/';
+def makeConfigFolder
+  FileUtils.mkdir_p "configs/"
+end
+
+def makeConfigFile(configName)
+  File.new("configs/#{configName}.RWEcfg", "w+")
 end
