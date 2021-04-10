@@ -65,7 +65,7 @@ class ConfigEditor
 
   def ConfigEditor.classValuesEditor(display, config)
     while true
-      case display.getSelectionInput("What do you want to do with the Class Values?", [{ text: "Set Values of a CSS Class", value: 1 }, { text: "Remove values from a Class Variable in the Config", value: 2 }, { text: "Remove CSS Class from Config", value: 3 }, { text: "Go Back", value: 9 }])
+      case display.getSelectionInput("What do you want to do with the Class Values?", [{ text: "Set values of a Class Variable", value: 1 }, { text: "Remove values from a Class Variable", value: 2 }, { text: "Delete a Class Variable from Config", value: 3 }, { text: "Go Back", value: 9 }])
 
       when 1
         classValues = ClassVariable.set(display, config)
@@ -73,11 +73,11 @@ class ConfigEditor
         display.popup("Added Values for class \"#{classValues[:name]}\" to the config!")
         return
       when 2
-        
+        ConfigEditor.removeClassValues(display, config)
       when 3
-        rootVariables = config.getRootNames
-        rootVariables << "Back (None)"
-        selection = display.getScrollableSelectionInput("What Class's Values do you wish to delete?", rootVariables)
+        classVariables = config.getClassNames
+        classVariables << "Back (None)"
+        selection = display.getScrollableSelectionInput("What Class Variable do you wish to delete?", classVariables)
 
         return if selection == "Back (None)"
         config.removeClassVariable(selection)
@@ -85,6 +85,32 @@ class ConfigEditor
         return
       when 9
         return
+      end
+    end
+  end
+
+  def ConfigEditor.removeClassValues(display, config)
+    while true
+      classVariables = config.getClassNames()
+      classVariables << "Back (None)"
+      chosenClass = display.getScrollableSelectionInput("Which Class Variable do you want to remove values from?", classVariables)
+      return if chosenClass == "Back (None)"
+
+      while true
+        trueValues = config.getClassVariable(chosenClass)[:values] # Remove last item
+
+        choices = trueValues.dup
+        choices << "Back (Finished)"
+
+        
+        selection = display.getScrollableSelectionInput("Which values do you want to remove from \"#{chosenClass}\"?", choices)
+        break if selection == "Back (Finished)"
+
+        trueValues.delete_at(trueValues.index(trueValues.find { |item| item.downcase == selection.downcase }))
+
+        config.getClassVariable(chosenClass)[:values] = trueValues; # Set the new values
+
+        display.popup("Successfully removed that value from \"#{chosenClass}\"!");
       end
     end
   end
