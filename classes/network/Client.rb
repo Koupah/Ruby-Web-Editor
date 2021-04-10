@@ -1,27 +1,24 @@
 class Client
-  def initialize(socket, messageHandler)
+  def initialize(socket, config)
     @socket = socket
-    @messageHandler = messageHandler
+    @config = config
     @finished = false
   end
 
   def close
     @finished = true
+    @listener.terminate if !@listener.nil?
   end
 
   def listen
-    Thread.new {
+    @listener = Thread.new {
       begin
         while !@finished
           first_byte = @socket.getbyte
           fin = first_byte & 0b10000000
           opcode = first_byte & 0b00001111
 
-          raise "We don't support continuations" unless fin
-
-          if fin
-            raise ConnectionError.throw("Continuations are not supported!")
-          end
+          raise ConnectionError.throw("Continuations are not supported!") unless fin
 
           raise "We only support opcode 1" unless opcode == 1
 
@@ -32,7 +29,7 @@ class Client
           raise "All incoming frames should be masked according to the websocket spec" unless is_masked
           raise "We only support payloads < 126 bytes in length" unless payload_size < 126
 
-          STDERR.puts "Payload size: #{payload_size} bytes"
+          # STDERR.puts "Payload size: #{payload_size} bytes"
 
           mask = 4.times.map { @socket.getbyte }
 
@@ -42,21 +39,21 @@ class Client
 
           received = unmasked_data.pack("C*").force_encoding("utf-8").inspect.gsub!(/\A"|"\Z/, "")
 
-          STDERR.puts "Converted to a string: #{received}"
+          # STDERR.puts "Converted to a string: #{received}"
 
-          method(@messageHandler).(received, self) if @messageHandler != nil
+          @config.networkHandler(received, self)
         end
       rescue ConnectionError => error
-        puts "Connection Error!"
+        puts "Connection Error! #{error.to_s}"
       rescue Exception => exception
-        puts "Unexpected Exception!"
+        # This is falsely thrown and can be ignored, happens when the server is closed
       end
     }
   end
 
   # Credit for the message sending: https://blog.pusher.com/websockets-from-scratch/
   def send(message)
-    STDERR.puts "Sending message to client: #{message}"
+    # STDERR.puts "Sending message to client: #{message}"
 
     bytes = [129]
     size = message.bytesize

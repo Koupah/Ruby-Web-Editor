@@ -4,10 +4,10 @@ require_relative "Client"
 require_relative "ConnectionError"
 
 class SocketServer
-  attr_reader :port
+  attr_reader :port, :clients
 
-  def initialize(port, messageHandler = nil)
-    @handler = messageHandler
+  def initialize(port, config)
+    @config = config
     @server = TCPServer.new("localhost", (@port = port.to_i))
     @clients = []
     @closed = true
@@ -15,16 +15,22 @@ class SocketServer
 
   def start
     @closed = false
-    Thread.new {
+    @listener = Thread.new {
       while !@closed
         socket = @server.accept
-        STDERR.puts "Incoming Request"
+
+        if @closed
+          return
+        end
+
+        # Testing done OUTSIDE of this project
+        # STDERR.puts "Incoming Request"
 
         if !handleHandshake(socket)
           next
         end
 
-        client = Client.new(socket, @handler)
+        client = Client.new(socket, @config)
         @clients << client
         client.listen
       end
@@ -35,7 +41,9 @@ class SocketServer
   def close
     @clients.each { |client| client.close }
     @clients.clear
+    @listener.terminate if !@listener.nil?
     @closed = true
+    @server.close
   end
 
   def handleHandshake(socket)
@@ -46,15 +54,15 @@ class SocketServer
 
     if matches = http_request.match(/^Sec-WebSocket-Key: (\S+)/)
       websocket_key = matches[1]
-      STDERR.puts "Websocket handshake detected with key: #{websocket_key}"
+      # STDERR.puts "Websocket handshake detected with key: #{websocket_key}"
     else
-      STDERR.puts "Aborting non-websocket connection"
+      # STDERR.puts "Aborting non-websocket connection"
       socket.close
       return false
     end
 
     response_key = Digest::SHA1.base64digest([websocket_key, "258EAFA5-E914-47DA-95CA-C5AB0DC85B11"].join)
-    STDERR.puts "Responding to handshake with key: #{response_key}"
+    # STDERR.puts "Responding to handshake with key: #{response_key}"
 
     socket.write <<-eos
 HTTP/1.1 101 Switching Protocols
