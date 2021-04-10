@@ -1,5 +1,5 @@
 require_relative "display/Debug"
-require_relative "features/CreateConfig"
+require_relative "features/ConfigManager"
 class Program < Display
   def initialize(screen, header, arguments)
     super(0, header.height + 1, arguments[:debug] ? screen.width / 2 : screen.width, screen.height - header.height - 1)
@@ -40,9 +40,9 @@ class Program < Display
     setCursor(1, 1)
 
     while true
-      case makeSelection("What would you like to do?", [{ text: "Create/Edit Website Config", value: 1 }, { text: "option 2", value: 2 }, { text: "Exit Program", value: 9 }])
+      case getSelectionInput("What would you like to do?", [{ text: "Create/Edit Website Config", value: 1 }, { text: "option 2", value: 2 }, { text: "Exit Program", value: 9 }])
       when 1
-        CreateConfig.start(self);
+        ConfigManager.start(self);
       when 9
         break;
       end
