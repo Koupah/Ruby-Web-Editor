@@ -10,7 +10,7 @@ class Color
     Curses.init_pair(6, Curses::COLOR_MAGENTA, Curses::COLOR_MAGENTA)
     Curses.init_pair(7, Curses::COLOR_WHITE, Curses::COLOR_BLACK)
     Curses.init_pair(8, Curses::COLOR_BLACK, Curses::COLOR_BLACK)
-
+    
     @red = 1
     @yellow = 2
     @green = 3
@@ -20,12 +20,12 @@ class Color
     @white = 7
     @black = 8
 
-    @dim = A_DIM
-    @bright = A_BOLD
-    @normal = A_NORMAL
-    @blink = A_BLINK
+    @dim = @dark = A_DIM
+    @bright = @bold = A_BOLD
+    @normal = @default = A_NORMAL
+    @blink = @blinking = A_BLINK
   end
-
+  
   def Color.set(display, id, type = @normal)
     # Disable previous color
     display.display.attroff(display.color) if display.color != nil
