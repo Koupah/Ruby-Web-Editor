@@ -30,13 +30,13 @@ class Config
       return false
     end
 
-    if (!json[:rootValues].nil?)
+    if (!json[:rootValues].nil? && json[:rootValues].length > 0)
       json[:rootValues].each { |item|
        rootValues << { name: item[:name], value: item[:value] }
       }
     end
 
-    if (!json[:classValues].nil?)
+    if (!json[:classValues].nil? && json[:classValues].length > 0)
       json[:classValues].each { |item|
         classValues << { name: item[:name], values: item[:values] }
       }
@@ -71,15 +71,15 @@ class Config
     @values[:rootValues].delete_at(@values[:rootValues].index(@values[:rootValues].find { |item| item[:name].downcase == name.downcase }))
   end
 
-  def removeClassValues(name)
-    @values[:classValues].delete_at(@values[:classValues].index(@values[:classValues].find { |item| item[:name].downcase == name.downcase }))
+  def removeClassVariable(name)
+    @values[:classValues].find { |item| item[:name].downcase == name.downcase }[:values] = []
   end
 
   def hasClassValues(name)
     return !@values[:classValues].find { |item| item[:name].downcase == name.downcase }.nil?
   end
 
-  def getClassValues(name)
+  def getClassVariable(name)
     return @values[:classValues].find { |item| item[:name].downcase == name.downcase }
   end
 end
