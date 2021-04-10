@@ -10,6 +10,14 @@ def defaultBox(display, title)
   Color.set(display, :green, :bright)
 end
 
+def readFile(file)
+  begin
+    return File.read(file)
+  rescue => exception
+    return "Couldn't read file! #{exception.to_s}"
+  end
+end
+
 def isWindows()
   return (RbConfig::CONFIG["host_os"] =~ /mswin|mingw|cygwin/)
 end
