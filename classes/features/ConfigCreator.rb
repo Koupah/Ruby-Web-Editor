@@ -1,17 +1,19 @@
+require_relative "../Utility"
 class ConfigCreator
-    
-    def ConfigCreator.validateInput(input)
-        toReturn = {passed: true, message: ""};
-        if !input.start_with?("apple")
-            toReturn[:passed] = false;
-            toReturn[:message] = "Input needs to start with apple";
-        end
-        return toReturn;
+  def ConfigCreator.validateInput(input)
+    toReturn = { passed: true, message: "" }
+
+    if configExists(input)
+      toReturn[:passed] = false
+      toReturn[:message] = "A Config with that name already exists!"
+    elsif !alphanumeric(input)
+      toReturn[:passed] = false
+      toReturn[:message] = "Config names can only be alphanumeric (and can't contain spaces)!"
     end
+    return toReturn
+  end
 
-    def ConfigCreator.start(display)
-        display.getStringInput("input here", self.method(:validateInput));
-    end
-
-
+  def ConfigCreator.start(display)
+    display.getStringInput("What would you like to name this config?", self.method(:validateInput))
+  end
 end

@@ -51,14 +51,19 @@ def checkArguments
   return toReturn
 end
 
-def configExists(file)
-  return File.exist?("configs/" + file + ".RWEcfg")
-end
-
 def makeConfigFolder
   FileUtils.mkdir_p "configs/"
 end
 
+def configExists(file)
+  return File.exist?("configs/#{file}.RWEcfg")
+end
+
 def makeConfigFile(configName)
   File.new("configs/#{configName}.RWEcfg", "w+")
+end
+
+def alphanumeric(string)
+    chars = ('a'..'z').to_a + ('A'..'Z').to_a + (0..9).to_a
+    return string.chars.detect {|ch| !chars.include?(ch)}.nil?
 end

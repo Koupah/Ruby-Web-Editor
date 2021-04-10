@@ -8,7 +8,7 @@ class Debug < Display
 
   def setup
     title = "DEBUG"
-    setColors(Curses::COLOR_YELLOW, Curses::COLOR_BLACK, 4)
+    Color.set(self, :yellow, :bright)
     setBorder("|", "-")
     setCursor((@width / 2) - (title.length / 2), 0)
     addText(title)
@@ -18,8 +18,8 @@ class Debug < Display
     
     clearBox()
 
-    setColors(Curses::COLOR_GREEN, Curses::COLOR_BLACK, 5)
-
+    Color.set(self, :green);
+    
     setCursor(1, 1)
     
     @messages << "---"
