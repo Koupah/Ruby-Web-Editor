@@ -21,6 +21,8 @@ class ConfigApplier
     server = SocketServer.new(3369, config)
     server.start
 
+    display.popup("Copy the code from \"client.js\" into your browsers console\n\nAlternatively if you can,\ncopy the code from below:\n#{readFile("client.js")}")
+
     while server.clients.length == 0
       case display.getSelectionInput("Waiting for connection...\nRefresh to check for connection\nReturn if you wish to cancel", [{ text: "Refresh", value: 1 }, { text: "Cancel", value: 2 }])
       when 1
