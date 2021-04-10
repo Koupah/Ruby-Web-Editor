@@ -38,9 +38,15 @@ def main
   # Header Art
   headerRaw = "( Ruby Web Editor )" # Raw header (not art), used for iterating over
   headerArt = generateArt(headerRaw, "big") # Final header art, for use after animation
+
+  # Get the width of header for centering it's window
+  # Centering ascii itself is dumb :p
   stringWidth = getWidth(headerArt)
+
+  # Create header display, I inconsistently use screen.createDisplay and my own Display implementations but :shrug:
   header = screen.createDisplay("header", (screen.width / 2) - (stringWidth / 2) - 1, 0, stringWidth + 1, 7)
 
+  # Set the color of header
   Color.set(header, :red, :bright)
 
   # Header Startup Animation
@@ -95,13 +101,25 @@ end
 
 def displayError(errorDisplay, title, error)
   errorDisplay.setKeypad(true)
+
+  # Classic error colors
   Color.set(errorDisplay, :red, :bright)
+  
+  # Use tty box for making this box, it's just cooler
   box = TTY::Box.frame(width: errorDisplay.width - 1, height: errorDisplay.height - 1, title: { top_left: title }) do
     error
   end
+
+  # Set our cursors position, just to try and center vertically
   errorDisplay.setCursor(0, (errorDisplay.height / 2) - (box.split(/\n/).length / 2))
+
+  # Add the tty box to the display
   errorDisplay.addText(box)
+
+  # Block until we get a character, then end program
   errorDisplay.display.getch
+
+  # This is the ending of the program
   endProgram
 end
 
