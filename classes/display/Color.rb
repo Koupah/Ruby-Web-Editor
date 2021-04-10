@@ -1,3 +1,5 @@
+require "curses"
+
 class Color
   include Curses
 

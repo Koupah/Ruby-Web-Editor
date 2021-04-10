@@ -86,7 +86,7 @@ module Displayable
 
     while true
       clearBox(true)
-      Color.set(self, :yellow, :normal)
+      Color.set(self, :yellow, :bright)
       setCursor(1, 0)
 
       curspos = getCursor()
@@ -129,11 +129,11 @@ module Displayable
     }
 
     Color.set(self, :white, :dim)
-    setCursor(2, 2)
+    setCursor(2, getCursor()[1] + 1)
     addText("- Up Arrow, W and 1 to navigate upwards.", true)
-    setCursor(2, 3)
+    setCursor(2, getCursor()[1] + 1)
     addText("- Down Arrow, S and 2 to navigate downwards.", true)
-    setCursor(2, 4)
+    setCursor(2, getCursor()[1] + 1)
     addText("- Enter, K and 3 to confirm selection.", true)
   end
 
