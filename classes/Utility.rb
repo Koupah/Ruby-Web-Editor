@@ -63,6 +63,10 @@ def makeConfigFile(configName)
   File.new("configs/#{configName}.RWEcfg", "w+")
 end
 
+def getAllConfigs()
+  return Dir.entries("configs/")
+end
+
 def alphanumeric(string)
     chars = ('a'..'z').to_a + ('A'..'Z').to_a + (0..9).to_a
     return string.chars.detect {|ch| !chars.include?(ch)}.nil?
