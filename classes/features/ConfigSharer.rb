@@ -1,8 +1,11 @@
 require_relative "css/Config"
 require "strings"
+
 class ConfigSharer
   def ConfigSharer.start(display)
     while true
+      defaultBox("Ruby Web Editor - Config Deleter")
+      
       case display.getSelectionInput("What would you like to do?", [{ text: "Import a Config", value: 1 }, { text: "Share/Export a Config", value: 2 }, { text: "Return", value: 9 }])
       when 1
         ConfigSharer.import(display)
@@ -24,12 +27,12 @@ class ConfigSharer
   end
 
   def ConfigSharer.import(display)
-    input = display.getStringInput("Please type in the Share Code\nAlternatively you can type \"return\" to return", self.method(:shareCodeValidate)).tr("\n","")
+    input = display.getStringInput("Please type in the Share Code\nAlternatively you can type \"return\" to return", self.method(:shareCodeValidate)).tr("\n", "")
     return if input.downcase == "return"
-    
+
     imported = Config.new("placeholder")
     if !imported.load(display, input)
-      return;
+      return
     else
       display.popup("Success!\n\"#{imported.name}\" has been imported!")
     end
@@ -54,7 +57,6 @@ class ConfigSharer
       display.popup("Successfully exported \"#{name}\"\n\nThe Share Code should be copied to your clipboard\nIf it isn't, check the \"configs\" folder\nIt will be inside \"Latest-Share-Code.txt\"!")
     end
 
-   
     return
   end
 end

@@ -15,6 +15,7 @@ class ConfigCreator
   end
 
   def ConfigCreator.start(display)
+    
     configName = display.getStringInput("What would you like to name this config? (Or type 'complete' to return)", self.method(:validateConfigName))
     return false unless (configName.downcase != "complete")
 

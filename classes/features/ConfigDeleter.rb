@@ -9,6 +9,9 @@ class ConfigDeleter
 
   def ConfigDeleter.start(display)
     while true
+
+      defaultBox("Ruby Web Editor - Config Deleter")
+
       toDelete = display.getScrollableSelectionInput("Which Config would you like to delete?", self.options)
 
       # Return if they select 'return'
