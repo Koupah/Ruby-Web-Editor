@@ -1,4 +1,5 @@
 require "json"
+require "base64"
 
 class Config
   attr_reader :values, :name
@@ -13,9 +14,16 @@ class Config
     @name = name
   end
 
-  def load()
-    data = readConfig(name)
-
+  def load(data = nil)
+    if !data.nil?
+      decoded = Base64.decode64(data)
+      parts = decoded.split('-', 2)
+      @name = parts[0]
+      data = parts[1]
+      save();
+    else
+      data = readConfig(name)
+    end
     rootValues = []
     classValues = []
 
@@ -32,7 +40,7 @@ class Config
 
     if (!json[:rootValues].nil? && json[:rootValues].length > 0)
       json[:rootValues].each { |item|
-       rootValues << { name: item[:name], value: item[:value] }
+        rootValues << { name: item[:name], value: item[:value] }
       }
     end
 
@@ -81,5 +89,9 @@ class Config
 
   def getClassVariable(name)
     return @values[:classValues].find { |item| item[:name].downcase == name.downcase }
+  end
+
+  def getShareCode
+    return Base64.encode64("#{@name}-#{JSON.generate(@values)}")
   end
 end

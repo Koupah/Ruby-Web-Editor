@@ -41,11 +41,12 @@ def argsContain(query)
 end
 
 def checkArguments
-  toReturn = { debug: false, colors: true, animation: true }
+  toReturn = { debug: false, colors: true, animation: true, rgb: false }
 
   toReturn[:debug] = argsContain(["-debug", "-d", "--debug", "--d"])
   toReturn[:colors] = !argsContain(["-nocolor", "-nc", "--nocolors", "--nc", "--colorless", "-colorless"])
   toReturn[:animation] = !argsContain(["-noanimation", "-na", "--na", "--noanimation", "--quick", "-quick", "-q", "--q"])
+  toReturn[:rgb] = argsContain(["-vomit", "-puke", "-rgb", "-rainbow", "--vomit", "--puke", "--rgb", "--rainbow", "-rnbw", "--rnbw"])
 
   return toReturn
 end
