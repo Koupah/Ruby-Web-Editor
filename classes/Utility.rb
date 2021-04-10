@@ -56,18 +56,60 @@ def makeConfigFolder
 end
 
 def configExists(file)
-  return File.exist?("configs/#{file}.RWEcfg")
+  return File.exist?("configs/#{file}.rwecfg")
 end
+
+def deleteConfig(configName)
+  begin
+    result = File.delete("configs/#{configName}.rwecfg")
+    return result
+  rescue Exception => e
+    return false
+  end
+  # This shouldn't run? but incase it does, the 'return result' mustn't have worked
+  return false
+end
+
+def readConfig(name)
+  begin
+    return File.read("configs/#{name}.rwecfg")
+  rescue => exception
+    return false
+  end
+  # Same as comment in above function
+  return false
+end
+
+def saveConfig(name, data)
+  begin
+    File.write("configs/#{name}.rwecfg", JSON.pretty_generate(data))
+    return true;
+  rescue => exception
+    return false
+  end
+  # Same as comment in above above function
+  return false
+end
+
 
 def makeConfigFile(configName)
-  File.new("configs/#{configName}.RWEcfg", "w+")
+  begin
+    File.write("configs/#{configName}.rwecfg", JSON.pretty_generate({rootValues: "", classValues: ""}))
+    return true;
+  rescue => exception
+    return false
+  end
+  # Same as comment in above above function
+  return false
 end
 
-def getAllConfigs()
-  return Dir.entries("configs/")
+def getAllConfigs(removeExtension = true)
+  configs = Dir.entries("configs/").select { |file| file.downcase.end_with?(".rwecfg") }
+  return configs.map { |file| file[0..(file.length - 8)] } unless !removeExtension
+  return configs
 end
 
 def alphanumeric(string)
-    chars = ('a'..'z').to_a + ('A'..'Z').to_a + (0..9).to_a
-    return string.chars.detect {|ch| !chars.include?(ch)}.nil?
+  chars = ("a".."z").to_a + ("A".."Z").to_a + (0..9).to_a
+  return string.chars.detect { |ch| !chars.include?(ch) }.nil?
 end
