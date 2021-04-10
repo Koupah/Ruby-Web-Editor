@@ -76,7 +76,7 @@ module Displayable
   end
 
   # So proud of me for making this as 'clean' as i did
-  def popup(message, selection)
+  def popup(message, selection = "Okay")
     setKeypad(true)
 
     while true
@@ -124,7 +124,7 @@ module Displayable
   end
 
   # So proud of me for making this as 'clean' as i did
-  def getSrollableSelectionInput(message, selections)
+  def getScrollableSelectionInput(message, selections)
     selection = 0
     max = selections.length - 1
     setKeypad(true)
