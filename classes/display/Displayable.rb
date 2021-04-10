@@ -33,7 +33,7 @@ module Displayable
   def seperator(character)
     @display.setpos(@height, 0)
     @display.addstr(character * @width)
-    @display.refresh();
+    @display.refresh()
   end
 
   def addText(text, quick = false)
@@ -75,27 +75,76 @@ module Displayable
     end
   end
 
+  def selectionOutput(message)
+    clearBox(true)
+    Color.set(self, :yellow, :normal)
+    setCursor(1, 1)
+
+    addText(message, true)
+
+    Color.set(self, :white, :dim)
+    setCursor(2, 2)
+    addText("- Up Arrow, W and 1 to navigate upwards.", true)
+    setCursor(2, 3)
+    addText("- Down Arrow, S and 2 to navigate downwards.", true)
+    setCursor(2, 4)
+    addText("- Enter, K and 3 to confirm selection.", true)
+  end
+
+  # So proud of me for making this as 'clean' as i did
+  def getSrollableSelectionInput(message, selections)
+    selection = 0
+    max = selections.length - 1
+    setKeypad(true)
+
+    while true
+      selectionOutput(message);
+
+      current = 0
+      y = getCursor[1] + 2
+      
+      range = ([0, selection - 2].max..[selection + [4 - selection, 2].max, max].min);
+
+      dif = range.to_a[0]
+
+      selections[range].each { |item|
+        debug(item)
+        setCursor(1, y + current)
+        Color.set(self, current + dif == selection ? :green : :blue, :bright)
+        addText((current + dif == selection ? "-> " : "   ") + item, false)
+        current += 1
+      }
+
+      character = @display.getch
+      case character
+      when "w", "W", "1", KEY_UP # Up
+        selection = [selection - 1 < 0 ? max : selection - 1, 0].max
+      when "s", "S", "2", KEY_DOWN # Down
+        selection = [selection + 1 > max ? 0 : selection + 1, max].min
+      when 10, "k", "K", "3" # Confirm option
+        break
+      else
+        debug "#{character}"
+      end
+      doupdate
+    end
+    setKeypad(false)
+    @display.refresh()
+    return selections[selection];
+  end
+
   def getSelectionInput(message, selections)
     selection = 0
     max = selections.length - 1
     setKeypad(true)
 
     while true
-      clearBox(true)
-      Color.set(self, :yellow, :normal)
-      setCursor(1, 1)
-
-      addText(message, true)
-
-      Color.set(self, :yellow, :dim);
-      setCursor(2, 2)
-      addText("- Up Arrow, W and 1 to navigate upwards.", true)
-      setCursor(2, 3)
-      addText("- Down Arrow, S and 2 to navigate downwards.", true)
+      selectionOutput(message);
 
       current = 0
+      y = getCursor[1] + 2
       selections.each { |hash|
-        setCursor(1, 5 + current)
+        setCursor(1, y + current)
         Color.set(self, current == selection ? :green : :blue, :bright)
         addText((current == selection ? "-> " : "   ") + hash[:text], true)
         current += 1
@@ -104,11 +153,11 @@ module Displayable
       character = @display.getch
 
       case character
-      when "w", "W", "1", KEY_UP
+      when "w", "W", "1", KEY_UP # Up
         selection = [selection - 1 < 0 ? max : selection - 1, 0].max
-      when "s", "S", "2", KEY_DOWN
+      when "s", "S", "2", KEY_DOWN # Down
         selection = [selection + 1 > max ? 0 : selection + 1, max].min
-      when 10 # Enter key
+      when 10, "k", "K", "3" # Confirm option
         break
       else
         debug "#{character}"
@@ -128,7 +177,6 @@ module Displayable
   def getStringInput(message, inputChecker = nil)
     setCursor(1, 1)
 
-    hasErrored = false
     input = nil
 
     while true
@@ -140,6 +188,8 @@ module Displayable
       addText(message)
 
       if input != nil
+        prev = @color
+        Color.set(self, :red, :bright)
         if input.length < 1
           setCursor(2, getLines(message) + 1) # Put it the line after message
           addText("Your input needs to be atleast 1 character long!")
@@ -149,11 +199,14 @@ module Displayable
         else
           break
         end
+        Color.setByAttribute(self, prev)
       end
 
       setCursor(3, getCursor()[1] + 2)
 
+      Color.set(self, :green, :blink)
       addText("> ")
+      Color.set(self, :green, :bright)
 
       # Set input, wrap back around
       input = @display.getstr
