@@ -15,8 +15,8 @@ class ConfigCreator
   end
 
   def ConfigCreator.start(display)
-    configName = display.getStringInput("What would you like to name this config? (Or type 'back' to return)", self.method(:validateConfigName))
-    return false unless (configName.downcase != "back")
+    configName = display.getStringInput("What would you like to name this config? (Or type 'complete' to return)", self.method(:validateConfigName))
+    return false unless (configName.downcase != "complete")
 
     makeConfigFile(configName)
     display.debug("Made config file with name: #{configName}")
