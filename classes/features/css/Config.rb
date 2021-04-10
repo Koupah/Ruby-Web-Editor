@@ -104,4 +104,34 @@ class Config
     Clipboard.copy(shareCode) if isWindows()
     return shareCode
   end
+
+  def networkHandler(message, client)
+    client.send("[E]console.log('Connected to Ruby Web Editor!');")
+
+    rootSetFunction = "var r = document.querySelector(':root');"
+    @values[:rootValues].each { |rootValue|
+      rootSetFunction += "r.style.setProperty('#{rootValue[:name]}', '#{rootValue[:value]}');"
+    }
+    client.send("[E]#{rootSetFunction}")
+
+    styleSetFunction = "function changeStyle(e,t){for(s in document.styleSheets){var r=document.styleSheets[s].cssRules;for(x in r)if(r[x].selectorText==e){for(cssprop in t)r[x].style[cssprop]=t[cssprop];return!0}}return!1};"
+    @values[:classValues].each { |item|
+      styleSetFunction += "changeStyle('#{item[:name]}', {#{cssify(item[:values])}});"
+    }
+    client.send("[E]#{styleSetFunction}")
+
+    client.send("[E]console.log('Completed Config Application!');")
+
+  end
+
+  def cssify(array)
+    combined = ""
+    array.each_with_index { |line, index|
+      parts = line.split(": ", 2)
+      combined += "'#{parts[0]}': '#{parts[1] || "/* No Value */"}'"
+      combined += ", " if array.length - 1 > index
+    }
+
+    return combined;
+  end
 end
