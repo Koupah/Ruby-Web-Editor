@@ -16,3 +16,5 @@ gem "strings", "~> 0.2.1"
 
 gem "clipboard", "~> 1.3"
 gem "ffi", :platforms => [:mswin, :mingw] # Required by Clipboard on Windows
+
+gem "color_math", "~> 0.1.0"
