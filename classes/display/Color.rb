@@ -9,7 +9,7 @@ class Color
     Curses.init_pair(5, Curses::COLOR_BLUE, Curses::COLOR_BLACK)
     Curses.init_pair(6, Curses::COLOR_MAGENTA, Curses::COLOR_MAGENTA)
     Curses.init_pair(7, Curses::COLOR_WHITE, Curses::COLOR_BLACK)
-    Curses.init_pair(7, Curses::COLOR_BLACK, Curses::COLOR_BLACK)
+    Curses.init_pair(8, Curses::COLOR_BLACK, Curses::COLOR_BLACK)
 
     @red = 1
     @yellow = 2
@@ -23,6 +23,7 @@ class Color
     @dim = A_DIM
     @bright = A_BOLD
     @normal = A_NORMAL
+    @blink = A_BLINK
   end
 
   def Color.set(display, id, type = @normal)
@@ -34,7 +35,7 @@ class Color
 
     # Enable the provided color
     display.display.attron(display.color)
-    
+
   end
 
   def Color.setByAttribute(display, attribute)
