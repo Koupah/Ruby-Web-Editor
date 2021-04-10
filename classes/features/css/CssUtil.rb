@@ -1,8 +1,8 @@
 # Best name I could come up with LMAO
-module CssAble
+class CssUtil
 
   # Function to ensure root variable name begins with --
-  def rootVariableName(name)
+  def CssUtil.rootVariableName(name)
     if !name.start_with?("--")
       name = "--" + name
     end
@@ -10,7 +10,7 @@ module CssAble
   end
 
   # Function to ensure class name begins with .
-  def classVariableName(name)
+  def CssUtil.classVariableName(name)
     if !name.start_with?(".")
         name = "." + name;
     end

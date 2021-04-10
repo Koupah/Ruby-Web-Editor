@@ -1,13 +1,16 @@
-require_relative "CssAble"
+require_relative "CssUtil"
 
 class RootVariable
-  include CssAble
 
-  def RootVariable.set()
-    name = getStringInput("What is the name of the root variable you wish to set? (Example: --color-red )")
+  def RootVariable.set(display)
+    name = CssUtil.rootVariableName(display.getStringInput("What is the name of the Root Variable you wish to set? (Example: --color-red )"))
 
-    value = getStringInput("What is the value you wish to set to this root variable? (Example: color: #fff )")
+    value = display.getStringInput("What is the value you wish to set to this Root Variable? (Example: color: #fff )")
 
-    return { name: rootVariableName(name), values: [value] }
+    return { name: name, value: value }
+  end
+
+  def RootVariable.get(name, value)
+    return { name: name, value: value }
   end
 end

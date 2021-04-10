@@ -15,13 +15,11 @@ class ConfigCreator
   end
 
   def ConfigCreator.start(display)
-    display.getSrollableSelectionInput("How would you like to begin?", ('a'..'z').to_a)
     configName = display.getStringInput("What would you like to name this config? (Or type 'back' to return)", self.method(:validateConfigName))
-    return unless (configName.downcase != "back")
+    return false unless (configName.downcase != "back")
 
     makeConfigFile(configName)
     display.debug("Made config file with name: #{configName}")
-
-    
+    return configName;
   end
 end
