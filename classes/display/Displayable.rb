@@ -109,7 +109,7 @@ module Displayable
 
   def selectionOutput(message)
     clearBox(true)
-    Color.set(self, :yellow, :normal)
+    Color.set(self, :yellow, :bright)
     setCursor(1, 1)
 
     addText(message, true)
@@ -142,7 +142,7 @@ module Displayable
       selections[range].each { |item|
         debug(item)
         setCursor(1, y + current)
-        Color.set(self, current + dif == selection ? :green : :blue, :bright)
+        Color.set(self, current + dif == selection ? :green : :cyan, :bright)
         addText((current + dif == selection ? "-> " : "   ") + item, false)
         current += 1
       }
@@ -177,7 +177,7 @@ module Displayable
       y = getCursor[1] + 2
       selections.each { |hash|
         setCursor(1, y + current)
-        Color.set(self, current == selection ? :green : :blue, :bright)
+        Color.set(self, current == selection ? :green : :cyan, :bright)
         addText((current == selection ? "-> " : "   ") + hash[:text], true)
         current += 1
       }
