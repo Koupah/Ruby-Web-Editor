@@ -115,7 +115,7 @@ module Displayable
     return selections[selection][:value]
   end
 
-  def getStringInput(message)
+  def getStringInput(message, inputChecker = nil)
     setCursor(1, 1)
 
     hasErrored = false
@@ -137,6 +137,8 @@ module Displayable
 
       if input.length < 1
         displayMessage = message + "\nYour input needs to be atleast 1 character long!"
+      elsif inputChecker != nil && !(checkerOutput = method(inputChecker).(input))[:passed]
+        displayMessage = message + "\n#{checkerOutput[:message]}"
       else
         break
       end
