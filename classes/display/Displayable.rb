@@ -3,16 +3,6 @@ require "curses"
 module Displayable
   include Curses
 
-  def update
-    @display.refresh
-  end
-
-  def setColors(col1, col2, id)
-    Curses.init_pair(id, col1, col2)
-    @display.color_set(id)
-    @display.refresh()
-  end
-
   def setCursor(x, y)
     @display.setpos(y, x)
   end
@@ -30,21 +20,33 @@ module Displayable
     @display.refresh()
   end
 
-  def setText(text)
+  def setText(text, quick = false)
     @display.clear
     @display.addstr(text)
-    @display.refresh()
+    if quick
+      doupdate
+    else
+      @display.refresh
+    end
   end
 
   def seperator(character)
     @display.setpos(@height, 0)
     @display.addstr(character * @width)
-    update()
+    @display.refresh();
   end
 
-  def addText(text)
+  def addText(text, quick = false)
     @display.addstr(text)
-    @display.refresh
+
+    # doupdate is a quicker version, but doesn't work sometimes
+    # Making it optional allows me to choose when it should be a quick text add
+    # Main reason for wanting it is to prevent flicker
+    if quick
+      doupdate
+    else
+      @display.refresh
+    end
   end
 
   def fillLine(text)
@@ -52,12 +54,14 @@ module Displayable
     @display.refresh
   end
 
-  def clearBox()
+  def clearBox(quick = false)
+    color = @color
     cursor = getCursor()
     setCursor(1, 1)
-    setColors(Curses::COLOR_BLACK, Curses::COLOR_BLACK, 100)
-    (1..(@height - 1)).each { |y| setCursor(1, y); addText(" " * (@width - 2)) }
+    Color.set(self, :black)
+    (1..(@height - 1)).each { |y| setCursor(1, y); addText(" " * (@width - 2), quick) }
     setCursor(cursor[0], cursor[1])
+    Color.setByAttribute(self, @color)
   end
 
   def setKeypad(bool)
@@ -77,22 +81,23 @@ module Displayable
     setKeypad(true)
 
     while true
-      clearBox()
-      @display.color_set(2)
+      clearBox(true)
+      Color.set(self, :yellow, :normal)
       setCursor(1, 1)
 
-      addText(message)
+      addText(message, true)
 
-      setCursor(3, 2)
-      addText("Up Arrow, W and 1 to navigate upwards.")
-      setCursor(3, 3)
-      addText("Down Arrow, S and 2 to navigate downwards.")
+      Color.set(self, :yellow, :dim);
+      setCursor(2, 2)
+      addText("- Up Arrow, W and 1 to navigate upwards.", true)
+      setCursor(2, 3)
+      addText("- Down Arrow, S and 2 to navigate downwards.", true)
 
       current = 0
       selections.each { |hash|
         setCursor(1, 5 + current)
-        @display.color_set(current == selection ? 4 : 3)
-        addText((current == selection ? "-> " : "   ") + hash[:text])
+        Color.set(self, current == selection ? :green : :blue, :bright)
+        addText((current == selection ? "-> " : "   ") + hash[:text], true)
         current += 1
       }
 
@@ -113,6 +118,11 @@ module Displayable
     setKeypad(false)
     @display.refresh()
     return selections[selection][:value]
+  end
+
+  # Catch any color_set's on the wrong object
+  def color_set(id)
+    @display.color_set(id)
   end
 
   def getStringInput(message, inputChecker = nil)
@@ -140,7 +150,7 @@ module Displayable
           break
         end
       end
-      
+
       setCursor(3, getCursor()[1] + 2)
 
       addText("> ")
