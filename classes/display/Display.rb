@@ -11,7 +11,7 @@ class Display
   def initialize(x, y, w, h)
     @display = Curses::Window.new(h + 1, w, y, x) # 1 needs to be added onto our height to make it correct, seems to be an issue with Curses?
     @x = x, @y = y, @width = w, @height = h, @color = nil
-    Color.set(self, :white);
+    Color.set(self, :white)
 
     clearDisplay()
   end
@@ -21,6 +21,6 @@ class Display
   end
 
   def setColor(col)
-    @color = col;
+    @color = col
   end
 end

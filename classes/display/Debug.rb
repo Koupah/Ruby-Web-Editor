@@ -19,7 +19,6 @@ class Debug < Display
     clearBox()
 
     Color.set(self, :green);
-    
     setCursor(1, 1)
     
     @messages << "---"
