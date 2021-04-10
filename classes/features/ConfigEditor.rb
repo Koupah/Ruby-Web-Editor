@@ -18,7 +18,7 @@ class ConfigEditor
 
     config = Config.new(name)
 
-    if config.load() == false
+    if config.load(display) == false
       display.popup("There was an error editing this config! (Possibly corrupt)", "Okay")
       return
     end
