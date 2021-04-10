@@ -1,5 +1,6 @@
 require "json"
 require "base64"
+require "clipboard"
 
 class Config
   attr_reader :values, :name
@@ -14,13 +15,18 @@ class Config
     @name = name
   end
 
-  def load(data = nil)
-    if !data.nil?
+  def load(display, data = nil)
+    fromShareCode = !data.nil?
+    if fromShareCode
       decoded = Base64.decode64(data)
-      parts = decoded.split('-', 2)
+      parts = decoded.split("-", 2)
       @name = parts[0]
+      if configExists(@name)
+        display.popup("You already have a config with the name \"#{@name}\"!\nPlease delete it to be able to import this Config!")
+        return false
+      end
       data = parts[1]
-      save();
+      save()
     else
       data = readConfig(name)
     end
@@ -35,6 +41,7 @@ class Config
     begin
       json = JSON.parse(data, { :symbolize_names => true })
     rescue => exception
+      display.popup("Failed to import that Config!\nPlease ensure the Share Code is correct!") if fromShareCode
       return false
     end
 
@@ -92,6 +99,9 @@ class Config
   end
 
   def getShareCode
-    return Base64.encode64("#{@name}-#{JSON.generate(@values)}")
+    shareCode = Base64.encode64("#{@name}-#{JSON.generate(@values)}")
+    shareCode = shareCode.tr("\n", "")
+    Clipboard.copy(shareCode) if isWindows()
+    return shareCode
   end
 end
