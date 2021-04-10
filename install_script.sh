@@ -58,7 +58,9 @@ echo " "
 
 fi
 
-echo "Thanks for installing Ruby Web Editor!"
+broadcast "Thanks for installing Ruby Web Editor!"
 
+echo "Press any key to exit!"
 
+read -n 1
 
