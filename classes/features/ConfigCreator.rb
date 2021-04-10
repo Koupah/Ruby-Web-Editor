@@ -1,6 +1,7 @@
 require_relative "../Utility"
+
 class ConfigCreator
-  def ConfigCreator.validateInput(input)
+  def ConfigCreator.validateConfigName(input)
     toReturn = { passed: true, message: "" }
 
     if configExists(input)
@@ -14,6 +15,13 @@ class ConfigCreator
   end
 
   def ConfigCreator.start(display)
-    display.getStringInput("What would you like to name this config?", self.method(:validateInput))
+    display.getSrollableSelectionInput("How would you like to begin?", ('a'..'z').to_a)
+    configName = display.getStringInput("What would you like to name this config? (Or type 'back' to return)", self.method(:validateConfigName))
+    return unless (configName.downcase != "back")
+
+    makeConfigFile(configName)
+    display.debug("Made config file with name: #{configName}")
+
+    
   end
 end
