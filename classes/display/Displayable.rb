@@ -119,29 +119,34 @@ module Displayable
     setCursor(1, 1)
 
     hasErrored = false
-
-    displayMessage = message
+    input = nil
 
     while true
       clearBox()
+
       @display.color_set(2)
       setCursor(1, 1)
 
-      addText(displayMessage)
+      addText(message)
 
-      setCursor(3, 3)
+      if input != nil
+        if input.length < 1
+          setCursor(2, getLines(message) + 1) # Put it the line after message
+          addText("Your input needs to be atleast 1 character long!")
+        elsif inputChecker != nil && !(checkerOutput = inputChecker.call(input))[:passed]
+          setCursor(2, getLines(message) + 1) # Put it the line after message
+          addText(checkerOutput[:message])
+        else
+          break
+        end
+      end
+      
+      setCursor(3, getCursor()[1] + 2)
 
       addText("> ")
 
+      # Set input, wrap back around
       input = @display.getstr
-
-      if input.length < 1
-        displayMessage = message + "\nYour input needs to be atleast 1 character long!"
-      elsif inputChecker != nil && !(checkerOutput = method(inputChecker).(input))[:passed]
-        displayMessage = message + "\n#{checkerOutput[:message]}"
-      else
-        break
-      end
     end
     return input
   end
