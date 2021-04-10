@@ -1,5 +1,6 @@
 require_relative "display/Debug"
 require_relative "features/ConfigManager"
+require_relative "features/ConfigDeleter"
 require_relative "display/Color"
 
 class Program < Display
@@ -42,6 +43,8 @@ class Program < Display
       case getSelectionInput("What would you like to do?", [{ text: "Create/Edit Web Editor Config", value: 1 }, { text: "Export/Import Web Editor Config", value: 2 }, { text: "Delete Web Editor Config", value: 3 }, { text: "Apply/Use Web Editor Config", value: 4 }, { text: "Exit Program", value: 9 }])
       when 1
         ConfigManager.start(self)
+      when 3
+        ConfigDeleter.start(self)
       when 9
         break
       end

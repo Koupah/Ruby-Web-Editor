@@ -1,5 +1,6 @@
 require_relative "classes/Utility"
 require_relative "classes/display/Screen"
+require_relative "classes/display/Color"
 require_relative "classes/Program"
 
 def main
@@ -8,9 +9,12 @@ def main
   # Create our screen
   screen = Screen.new(arguments[:colors])
 
+  # Setup our colors
+  Color.setup()
+
   errorDisplay = screen.createDisplay("error", 0, 0, screen.width, screen.height)
 
-  Curses.init_pair(1, Curses::COLOR_RED, Curses::COLOR_BLACK)
+  errorDisplay.display.color_set(2)
 
   if (screen.height < 19)
     displayError(errorDisplay, "ERROR", "ERROR: Your terminal window is too short! Please make it taller!\nMinimum Height: 19 chars\nCurrent Height: #{screen.height} chars")
@@ -22,9 +26,11 @@ def main
   headerArt = generateArt(headerRaw, "big")
   stringWidth = getWidth(headerArt)
   header = screen.createDisplay("header", (screen.width / 2) - (stringWidth / 2) - 1, 0, stringWidth + 1, 7)
-  header.setColors(Curses::COLOR_RED, Curses::COLOR_BLACK, 1)
+
+  Color.set(header, :red, :bright)
 
   # Header Startup Animation
+  # Tried removing the flicker, but it just causes too many issues ):
   if arguments[:animation]
     (0..headerRaw.length).each { |index|
       header.setText(generateArt(headerRaw[0..index], "big"))
@@ -46,7 +52,7 @@ end
 
 def displayError(errorDisplay, title, error)
   errorDisplay.setKeypad(true)
-  errorDisplay.display.color_set(1)
+  Color.set(errorDisplay, :red)
   box = TTY::Box.frame(width: errorDisplay.width - 1, height: errorDisplay.height - 1, title: { top_left: title }) do
     error
   end
