@@ -75,6 +75,38 @@ module Displayable
     end
   end
 
+  # So proud of me for making this as 'clean' as i did
+  def popup(message, selection)
+    setKeypad(true)
+
+    while true
+      clearBox(true)
+      Color.set(self, :yellow, :normal)
+      setCursor(1, 1)
+      addText(message, true)
+
+      Color.set(self, :white, :dim)
+      setCursor(2, 2)
+      addText("- Press Enter, K or 3 to continue.", true)
+
+      setCursor(1, getCursor()[1] + 2)
+      Color.set(self, :green, :bright)
+      addText("-> " + selection, false)
+
+      character = @display.getch
+      case character
+      when 10, "k", "K", "3" # Confirm option
+        break
+      else
+        debug "#{character}"
+      end
+      doupdate
+    end
+    setKeypad(false)
+    @display.refresh()
+    return true
+  end
+
   def selectionOutput(message)
     clearBox(true)
     Color.set(self, :yellow, :normal)
@@ -98,12 +130,12 @@ module Displayable
     setKeypad(true)
 
     while true
-      selectionOutput(message);
+      selectionOutput(message)
 
       current = 0
       y = getCursor[1] + 2
-      
-      range = ([0, selection - 2].max..[selection + [4 - selection, 2].max, max].min);
+
+      range = ([0, selection - 2].max..[selection + [4 - selection, 2].max, max].min)
 
       dif = range.to_a[0]
 
@@ -130,7 +162,7 @@ module Displayable
     end
     setKeypad(false)
     @display.refresh()
-    return selections[selection];
+    return selections[selection]
   end
 
   def getSelectionInput(message, selections)
@@ -139,7 +171,7 @@ module Displayable
     setKeypad(true)
 
     while true
-      selectionOutput(message);
+      selectionOutput(message)
 
       current = 0
       y = getCursor[1] + 2
