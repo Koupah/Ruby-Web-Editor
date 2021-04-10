@@ -53,9 +53,11 @@ module Displayable
   end
 
   def clearBox()
+    cursor = getCursor()
     setCursor(1, 1)
     setColors(Curses::COLOR_BLACK, Curses::COLOR_BLACK, 100)
     (1..(@height - 1)).each { |y| setCursor(1, y); addText(" " * (@width - 2)) }
+    setCursor(cursor[0], cursor[1])
   end
 
   def setKeypad(bool)
@@ -69,7 +71,7 @@ module Displayable
     end
   end
 
-  def makeSelection(message, selections)
+  def getSelectionInput(message, selections)
     selection = 0
     max = selections.length - 1
     setKeypad(true)
@@ -81,9 +83,14 @@ module Displayable
 
       addText(message)
 
+      setCursor(3, 2)
+      addText("Up Arrow, W and 1 to navigate upwards.")
+      setCursor(3, 3)
+      addText("Down Arrow, S and 2 to navigate downwards.")
+
       current = 0
       selections.each { |hash|
-        setCursor(1, 3 + current)
+        setCursor(1, 5 + current)
         @display.color_set(current == selection ? 4 : 3)
         addText((current == selection ? "-> " : "   ") + hash[:text])
         current += 1
@@ -106,5 +113,34 @@ module Displayable
     setKeypad(false)
     @display.refresh()
     return selections[selection][:value]
+  end
+
+  def getStringInput(message)
+    setCursor(1, 1)
+
+    hasErrored = false
+
+    displayMessage = message
+
+    while true
+      clearBox()
+      @display.color_set(2)
+      setCursor(1, 1)
+
+      addText(displayMessage)
+
+      setCursor(3, 3)
+
+      addText("> ")
+
+      input = @display.getstr
+
+      if input.length < 1
+        displayMessage = message + "\nYour input needs to be atleast 1 character long!"
+      else
+        break
+      end
+    end
+    return input
   end
 end
