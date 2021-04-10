@@ -17,12 +17,16 @@ def main
 
   # Setup our colors
   Color.setup()
+  # Note added later on: Would've been cool if I presaved the colors values and set them back on program end
+  # However I am lazy, so screw that
 
+  # The display we will use for errors
   errorDisplay = screen.createDisplay("error", 0, 0, screen.width, screen.height)
 
+  # I wrote this program to suit this height, just have a decently sized terminal window. Really, it's small (Unless you have like 480p monitor??)
   if (screen.height < 19)
     displayError(errorDisplay, "ERROR", "ERROR: Your terminal window is too short! Please make it taller!\nMinimum Height: 19 chars\nCurrent Height: #{screen.height} chars")
-  elsif arguments[:help]
+  elsif arguments[:help] # Display help message, unintentionally indented the arguments but I'm leaving it like that :shrug:
     displayError(errorDisplay, "HELP", "Command Line Arguments:\n
       -help: Show this message\n
       -rainbow: Rainbow header\n
@@ -32,8 +36,8 @@ def main
   end
 
   # Header Art
-  headerRaw = "( Ruby Web Editor )"
-  headerArt = generateArt(headerRaw, "big")
+  headerRaw = "( Ruby Web Editor )" # Raw header (not art), used for iterating over
+  headerArt = generateArt(headerRaw, "big") # Final header art, for use after animation
   stringWidth = getWidth(headerArt)
   header = screen.createDisplay("header", (screen.width / 2) - (stringWidth / 2) - 1, 0, stringWidth + 1, 7)
 
@@ -48,6 +52,9 @@ def main
     }
   end
 
+  # Set the final version of the header, not to be touched from here on
+  header.setText generateArt("( Ruby Web Editor )", "big")
+
   if arguments[:rgb]
     Thread.new {
       # The ideal solution would be to set the ID so out of this world it can't be accidentally used, but cpu's have limitations
@@ -56,6 +63,7 @@ def main
       # Also, there seems to be a max ID ~ 10??. I guess 9 will work for now
 
       # Update: this is like a secret feature anyways, why do i care ??
+      # Updated Update: Not secret, but not really known unless you pass --help
       id = 9
       Curses.init_color(id, 255, 0, 0)
       header.display.attron(id)
@@ -70,8 +78,7 @@ def main
     }
   end
 
-  header.setText generateArt("( Ruby Web Editor )", "big")
-
+  # Create our main program
   program = Program.new(screen, header, arguments)
 
   # Program.start is blocking, once it's complete the app is over
@@ -81,7 +88,7 @@ def main
   program.display.clear
   errorDisplay.display.clear
   header.display.clear
-  
+
   # Reuse Error Display for exit screen
   displayError(errorDisplay, "EXITING", "\nThank you for using Ruby Web Editor!\n\nPress any key to exit.")
 end
